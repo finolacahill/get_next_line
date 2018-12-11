@@ -6,7 +6,7 @@
 /*   By: fcahill <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/28 14:11:52 by fcahill           #+#    #+#             */
-/*   Updated: 2018/12/09 21:08:40 by fcahill          ###   ########.fr       */
+/*   Updated: 2018/12/11 23:05:01 by fcahill          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ static int		ft_splitline(char *buf, char **line, char *remain[], int fd)
 		tmp = ft_strdup(buf);
 	ft_strclr(remain[fd]);
 	ft_strclr(buf);
+	free(remain[fd]);
 	remain[fd] = ft_strdup(ft_strchr(tmp, '\n') + 1);
 	*(ft_strchr(tmp, '\n')) = '\0';
 	free(*line);
@@ -38,15 +39,15 @@ static int		ft_makeline(char *buf, char **line, char *remain[], int fd)
 	tmp = NULL;
 	if (ft_strchr(buf, '\n') == NULL)
 	{
-		if ((remain[fd]))
+		if ((remain[fd]) && remain[fd] != buf)
 		{
-			tmp = ft_strdup(remain[fd]);
+			tmp = ft_strjoin(remain[fd], buf);
 			free(remain[fd]);
-			remain[fd] = ft_strjoin(tmp, buf);
+			remain[fd] = ft_strdup(tmp);
 			ft_strclr(buf);
 			free(*line);
 			*line = ft_strdup(remain[fd]);
-			ft_strdel(&tmp);	
+			ft_strdel(&tmp);
 			return (0);
 		}
 		remain[fd] = ft_strdup(buf);
@@ -100,9 +101,11 @@ int				get_next_line(const int fd, char **line)
 			return (-1);
 		buf[n] = '\0';
 		if ((ft_makeline(buf, line, remain, fd) == 1))
+		{
+			ft_strdel(&buf);
 			return (1);
+		}
 	}
-	free(buf);
 	n = ft_end(n, line, remain, fd);
 	return (n);
 }
