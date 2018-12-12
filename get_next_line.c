@@ -6,7 +6,7 @@
 /*   By: fcahill <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/28 14:11:52 by fcahill           #+#    #+#             */
-/*   Updated: 2018/12/11 23:05:01 by fcahill          ###   ########.fr       */
+/*   Updated: 2018/12/12 19:16:19 by fcahill          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,16 +43,16 @@ static int		ft_makeline(char *buf, char **line, char *remain[], int fd)
 		{
 			tmp = ft_strjoin(remain[fd], buf);
 			free(remain[fd]);
-			remain[fd] = ft_strdup(tmp);
+			remain[fd] = tmp;
 			ft_strclr(buf);
 			free(*line);
 			*line = ft_strdup(remain[fd]);
-			ft_strdel(&tmp);
 			return (0);
 		}
 		remain[fd] = ft_strdup(buf);
 		ft_strclr(buf);
 		free(tmp);
+	//	printf("nonew\n");
 		return (0);
 	}
 	free(tmp);
@@ -72,6 +72,7 @@ static int		ft_end(int n, char **line, char *remain[], int fd)
 		ft_strclr(*line);
 		ft_strclr(remain[fd]);
 		*line = tmp;
+//		printf("end");
 		return (1);
 	}
 	if ((n == 0) && (!(*remain[fd])))
