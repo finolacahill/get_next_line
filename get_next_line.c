@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_getnextchar.c                                   :+:      :+:    :+:   */
+/*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fcahill <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/28 14:11:52 by fcahill           #+#    #+#             */
-/*   Updated: 2018/12/12 19:16:19 by fcahill          ###   ########.fr       */
+/*   Updated: 2018/12/14 14:54:57 by fcahill          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,16 +18,21 @@ static int		ft_splitline(char *buf, char **line, char *remain[], int fd)
 
 	tmp = NULL;
 	if ((remain[fd] != NULL) && (buf != remain[fd]))
-		tmp = ft_strjoin(remain[fd], buf);
-	else
-		tmp = ft_strdup(buf);
+	{
+		if (!(tmp = ft_strjoin(remain[fd], buf)))
+			return (-1);
+	}
+	else if (!(tmp = ft_strdup(buf)))
+		return (-1);
 	ft_strclr(remain[fd]);
 	ft_strclr(buf);
 	free(remain[fd]);
-	remain[fd] = ft_strdup(ft_strchr(tmp, '\n') + 1);
+	if (!(remain[fd] = ft_strdup(ft_strchr(tmp, '\n') + 1)))
+		return (-1);
 	*(ft_strchr(tmp, '\n')) = '\0';
 	free(*line);
-	*line = ft_strdup(tmp);
+	if (!(*line = ft_strdup(tmp)))
+		return (-1);
 	free(tmp);
 	return (1);
 }
@@ -41,45 +46,42 @@ static int		ft_makeline(char *buf, char **line, char *remain[], int fd)
 	{
 		if ((remain[fd]) && remain[fd] != buf)
 		{
-			tmp = ft_strjoin(remain[fd], buf);
+			if (!(tmp = ft_strjoin(remain[fd], buf)))
+				return (-1);
 			free(remain[fd]);
 			remain[fd] = tmp;
 			ft_strclr(buf);
 			free(*line);
-			*line = ft_strdup(remain[fd]);
+			if (!(*line = ft_strdup(remain[fd])))
+				return (-1);
 			return (0);
 		}
-		remain[fd] = ft_strdup(buf);
+		if (!(remain[fd] = ft_strdup(buf)))
+			return (-1);
 		ft_strclr(buf);
 		free(tmp);
-	//	printf("nonew\n");
 		return (0);
 	}
 	free(tmp);
-	if ((ft_splitline(buf, line, remain, fd)) == 1)
-		return (1);
-	return (-1);
+	return (ft_splitline(buf, line, remain, fd));
 }
 
 static int		ft_end(int n, char **line, char *remain[], int fd)
 {
 	char *tmp;
 
+	tmp = NULL;
 	if (n == 0 && *remain[fd])
 	{
-		tmp = ft_strnew(ft_strlen(remain[fd]));
-		tmp = ft_strdup(*line);
+		if (!(tmp = ft_strdup(remain[fd])))
+			return (-1);
 		ft_strclr(*line);
 		ft_strclr(remain[fd]);
 		*line = tmp;
-//		printf("end");
 		return (1);
 	}
 	if ((n == 0) && (!(*remain[fd])))
-	{
-		free(*line);
 		return (0);
-	}
 	return (-1);
 }
 
