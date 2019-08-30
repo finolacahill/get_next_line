@@ -1,4 +1,4 @@
-#**Get Next Line**
+#Get Next Line
 _________________________________
 Final grade 125/100
 ###The Challenge 
